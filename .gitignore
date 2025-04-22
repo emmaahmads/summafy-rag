@@ -1,0 +1,18 @@
+# Ignore all test files and test artifacts
+/tests/
+!/tests/.gitkeep
+scripts/
+!/scripts/.gitkeep
+chroma-data/
+.pytest_cache
+.env
+remove-prune.sh
+*.pdf
+*__pycache__
+ingestor/http:*
+*.pyc
+*.pyo
+.env
+.gitignore
+
+
