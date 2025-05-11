@@ -1,67 +1,8 @@
-version: '3.8'
-
 services:
-  chromadb:
-    image: chromadb/chroma:latest
-    container_name: chromadb
-    restart: unless-stopped
-    environment:
-      - IS_PERSISTENT=TRUE
-      - PERSIST_DIRECTORY=/chroma-data
-    volumes:
-      - ./chroma-data:/chroma-data
-    ports:
-      - "8000:8000"  # Expose Chroma DB API
-
   doc-ingestor:
     build:
       context: ./ingestor
       dockerfile: Dockerfile
     container_name: doc-ingestor
-    environment:
-      - CHROMA_DB_DIR=http://chromadb:8000
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      # Add other env vars as needed
     volumes:
       - ./ingestor:/app
-    depends_on:
-      - chromadb
-    command: tail -f /dev/null  # Override for interactive/dev use; replace as needed
-
-  doc-retriever:
-    build:
-      context: ./retriever
-      dockerfile: Dockerfile
-    container_name: doc-retriever
-    environment:
-      - CHROMA_DB_DIR=http://chromadb:8000
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OLLAMA_API_URL=http://ollama:11434
-      - OLLAMA_MODEL=${OLLAMA_MODEL}
-    volumes:
-      - ./retriever:/app
-    depends_on:
-      - chromadb
-      - ollama
-    command: tail -f /dev/null  # Override for interactive/dev use; replace as needed
-
-  ollama:
-    build:
-      context: ./ollama
-      dockerfile: Dockerfile
-    container_name: ollama
-    environment:
-      - DEFAULT_MODEL=${OLLAMA_MODEL:-llama2}
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: unless-stopped
-
-volumes:
-  ollama_data:
-
-# Usage:
-# - Place your Dockerfile in the same directory for doc-ingestor and doc-retriever (can share the same Dockerfile if desired)
-# - Set your OPENAI_API_KEY and OLLAMA_API_URL in a .env file or export before running
-# - Run: docker-compose up --build
