@@ -21,23 +21,23 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::120569638976:role/GitHubActionsRole_summafyapp
-          aws-region: ap-southeast-1
+          aws-region: ${{ secrets.AWS_ECR_REGION }}
 
       - name: Build Docker image
         run: |
-          docker build -t summafy-step/ingestor:${{ github.sha }} ./ingestor
+          docker build -t ${{ secrets.AWS_INGESTOR_REPO }}:${{ github.sha }} ./ingestor
 
       - name: Tag Docker image
         run: |
-          docker tag summafy-step/ingestor:${{ github.sha }} summafy-step/ingestor:latest
+          docker tag ${{ secrets.AWS_INGESTOR_REPO }}:${{ github.sha }} ${{ secrets.AWS_INGESTOR_REPO }}:latest
 
       - name: Push Docker image (git sha)
         run: |
-          docker push summafy-step/ingestor:${{ github.sha }}
+          docker push ${{ secrets.AWS_ECR_URI }}/${{ secrets.AWS_INGESTOR_REPO }}:${{ github.sha }}
 
       - name: Push Docker image (latest)
         run: |
-          docker push summafy-step/ingestor:latest
+          docker push ${{ secrets.AWS_ECR_URI }}/${{ secrets.AWS_INGESTOR_REPO }}:latest
       
       # - name: Deploy to AWS Lambda
       #   run: |
