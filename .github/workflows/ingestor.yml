@@ -23,21 +23,24 @@ jobs:
           role-to-assume: arn:aws:iam::120569638976:role/GitHubActionsRole_summafyapp
           aws-region: ${{ secrets.AWS_ECR_REGION }}
 
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.AWS_INGESTOR_REPO }}:${{ github.sha }} ./ingestor
+          docker build -t ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }} ./ingestor
 
       - name: Tag Docker image
         run: |
-          docker tag ${{ secrets.AWS_INGESTOR_REPO }}:${{ github.sha }} ${{ secrets.AWS_INGESTOR_REPO }}:latest
+          docker tag ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }} ${{ secrets.AWS_ECR_INGESTOR }}:latest
 
       - name: Push Docker image (git sha)
         run: |
-          docker push ${{ secrets.AWS_ECR_URI }}/${{ secrets.AWS_INGESTOR_REPO }}:${{ github.sha }}
+          docker push ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }}
 
       - name: Push Docker image (latest)
         run: |
-          docker push ${{ secrets.AWS_ECR_URI }}/${{ secrets.AWS_INGESTOR_REPO }}:latest
+          docker push ${{ secrets.AWS_ECR_INGESTOR }}:latest
       
       # - name: Deploy to AWS Lambda
       #   run: |
