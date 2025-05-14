@@ -3,8 +3,8 @@ name: Build and Push RAG-Lambda ingestor to AWS ECR
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'ingestor/**'
+    # paths:
+    #   - 'ingestor/**'
   workflow_dispatch:
 
 jobs:
@@ -52,8 +52,8 @@ jobs:
       #   run: |
       #     docker push ${{ secrets.AWS_ECR_INGESTOR }}:latest
       
-      # - name: Deploy to AWS Lambda
-      #   run: |
-      #     aws lambda update-function-code \
-      #       --function-name doc-ingestor \
-      #       --image-uri summafy-step/ingestor:latest
+      - name: Deploy to AWS Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name doc-ingestor \
+            --zip-file s3://${{ secrets.ZIP_BUCKET_NAME }}/lambda-ingestor.zip
