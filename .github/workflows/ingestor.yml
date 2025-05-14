@@ -54,7 +54,9 @@ jobs:
       
       - name: Deploy to AWS Lambda
         run: |
-          aws lambda update-function-code \
-            --function-name summafy-lambdas-SummafyReadS3ContainerFunction-qBVFLZdIVR5f \
-            --s3-bucket ${{ secrets.ZIP_BUCKET_NAME }} \
-            --s3-key lambda-ingestor.zip
+          if aws cloudformation describe-stacks --stack-name summafy-lambdas > /dev/null 2>&1; then
+            aws lambda update-function-code \
+              --function-name summafy-lambdas-SummafyReadS3ContainerFunction-qBVFLZdIVR5f \
+              --s3-bucket ${{ secrets.ZIP_BUCKET_NAME }} \
+              --s3-key lambda-ingestor.zip
+          fi
