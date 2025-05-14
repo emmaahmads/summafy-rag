@@ -55,5 +55,6 @@ jobs:
       - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code \
-            --function-name doc-ingestor \
-            --zip-file s3://${{ secrets.ZIP_BUCKET_NAME }}/lambda-ingestor.zip
+            --function-name summafy-lambdas-SummafyReadS3ContainerFunction-qBVFLZdIVR5f \
+            --s3-bucket ${{ secrets.ZIP_BUCKET_NAME }} \
+            --s3-key lambda-ingestor.zip
