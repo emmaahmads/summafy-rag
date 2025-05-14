@@ -6,3 +6,5 @@ services:
     container_name: doc-ingestor
     volumes:
       - ./ingestor:/app
+    environment:
+    command: ["python", "extract_chunk_embed.py", "story.pdf"]

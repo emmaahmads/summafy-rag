@@ -15,5 +15,8 @@ ingestor/http:*
 .gitignore
 compose.sh
 iam_oidc.sh
+collector/*
+LAMBDA_OTEL_LAYER.md
+ingestor/lambda_ingestor.zip
 
 

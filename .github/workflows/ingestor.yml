@@ -23,24 +23,34 @@ jobs:
           role-to-assume: arn:aws:iam::120569638976:role/GitHubActionsRole_summafyapp
           aws-region: ${{ secrets.AWS_ECR_REGION }}
 
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build Docker image
+      - name: Build Lambda package
         run: |
-          docker build -t ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }} ./ingestor
+          cd ingestor
+          chmod +x build_lambda_zip.sh
+          ./build_lambda_zip.sh
 
-      - name: Tag Docker image
+      - name: Upload Lambda package to S3
         run: |
-          docker tag ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }} ${{ secrets.AWS_ECR_INGESTOR }}:latest
+          aws s3 cp ./ingestor/lambda-ingestor.zip s3://${{ secrets.ZIP_BUCKET_NAME }}/lambda-ingestor.zip
 
-      - name: Push Docker image (git sha)
-        run: |
-          docker push ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }}
+      # - name: Login to Amazon ECR
+      #   uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Push Docker image (latest)
-        run: |
-          docker push ${{ secrets.AWS_ECR_INGESTOR }}:latest
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }} ./ingestor
+
+      # - name: Tag Docker image
+      #   run: |
+      #     docker tag ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }} ${{ secrets.AWS_ECR_INGESTOR }}:latest
+
+      # - name: Push Docker image (git sha)
+      #   run: |
+      #     docker push ${{ secrets.AWS_ECR_INGESTOR }}:${{ github.sha }}
+
+      # - name: Push Docker image (latest)
+      #   run: |
+      #     docker push ${{ secrets.AWS_ECR_INGESTOR }}:latest
       
       # - name: Deploy to AWS Lambda
       #   run: |
